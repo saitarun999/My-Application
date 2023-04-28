@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/ButtonLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/todayButton"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:backgroundTint="@android:color/white"
+            android:text="Today"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="700px"
+            android:backgroundTint="@android:color/white"
+            android:text="+"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></CalendarView>
+    <LinearLayout
+        android:id="@+id/dayContent"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:hint="write something"
+            android:id="@+id/textInput"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:textColor="@color/black"/>
+        <Button
+            android:id="@+id/saveTextButton"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text="save text"/>
+    </LinearLayout>
+
+</LinearLayout>
