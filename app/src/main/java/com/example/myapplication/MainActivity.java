@@ -4,6 +4,9 @@ import static android.content.ContentValues.TAG;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.media.metrics.Event;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,11 +25,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 
 public class MainActivity extends AppCompatActivity {
     int currentYear = 0, currentMonth = 0, currentDay = 0;
     Calendar c;
+    BiometricPrompt biometricPrompt;
+    BiometricPrompt.PromptInfo promptInfo;
+    LinearLayout mainLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +64,40 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        mainLayout = findViewById(R.id.main_layout);
+        BiometricManager biometricManager = BiometricManager.from(this);
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)){
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Toast.makeText(this, "Not Available", Toast.LENGTH_SHORT).show();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Toast.makeText(this, "Fingerprint sensor not present", Toast.LENGTH_SHORT).show();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                Toast.makeText(this, "No Fingerprint", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        Executor executor = ContextCompat.getMainExecutor(this);
+        biometricPrompt = new BiometricPrompt(MainActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                Toast.makeText(MainActivity.this, "Authentication Succeeded", Toast.LENGTH_SHORT).show();
+                mainLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+            }
+        });
+        promptInfo = new BiometricPrompt.PromptInfo.Builder().setTitle("Scheduler").setDescription("Use Fingerprint to Login").setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG).setNegativeButtonText("Cancel").build();
+        biometricPrompt.authenticate(promptInfo);
     }
 
     private void openEvent1(int year,int month,int dayOfChange) throws ParseException {
